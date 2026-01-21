@@ -3,18 +3,26 @@
 ## Overview
 This is a **real-world coding challenge** working with Stellar blockchain data. You'll enhance a basic transaction viewer by implementing proper data display, modal views, and database persistence using Next.js, tRPC, and Stellar SDK/API.
 
+## Prerequisites
+Before starting, ensure you have the following installed:
+- **Node.js** (v18 or higher recommended)
+- **npm** or **pnpm** package manager
+- **Git** for cloning the repository
+- A code editor (VS Code recommended)
+
 ## Current State
 ✅ Basic transaction fetching via tRPC  
 ✅ Stellar API/SDK demo files in `scripts/` folder  
-✅ Helper files: `lib/stellar/trx-api.ts` and `lib/stellar/trx-sdk.ts`  
-✅ shadcn/ui components installed (Card, Dialog, Skeleton)  
-✅ Drizzle ORM configured for database
+✅ Helper files: `src/lib/stellar/trx-api.ts` and `src/lib/stellar/trx-sdk.ts`  
+✅ shadcn/ui components installed (Card, Dialog, Skeleton, Button)  
+✅ Drizzle ORM configured for database  
+✅ Environment example file (`.env.example`) included
 
 
 ## Important Resources
 
 ### 📚 Documentation & Demo Code
-- **Github Repo** : [https://github.com/actn-dev/questions.git](https://github.com/actn-dev/questions.git)
+- **Github Repo** : [https://github.com/arnob016/questions](https://github.com/arnob016/questions)
 - **Horizon API Docs**:
    - https://developers.stellar.org/docs/data/apis/horizon/api-reference/resources/transactions
     
@@ -27,8 +35,8 @@ This is a **real-world coding challenge** working with Stellar blockchain data. 
   - [`scripts/account.ts`](scripts/account.ts) - Account setup and response examples
 
 ### 🛠️ Implementation Files
-- [`lib/stellar/trx-api.ts`](lib/stellar/trx-api.ts) - Direct Horizon API approach
-- [`lib/stellar/trx-sdk.ts`](lib/stellar/trx-sdk.ts) - Stellar SDK approach
+- [`src/lib/stellar/trx-api.ts`](src/lib/stellar/trx-api.ts) - Direct Horizon API approach
+- [`src/lib/stellar/trx-sdk.ts`](src/lib/stellar/trx-sdk.ts) - Stellar SDK approach
 - Currently using **trx-api** methods in the app
 
 **Note:** You can use either Horizon API or Stellar SDK - choose what you prefer!
@@ -67,7 +75,7 @@ This is a **real-world coding challenge** working with Stellar blockchain data. 
 
 ---
 
-### **Task 2: Transaction Details Modal with Transection Operations **
+### **Task 2: Transaction Details Modal with Transaction Operations**
 
 **Current Problem:** 
 - Users can't see transaction details or operations
@@ -149,17 +157,36 @@ This is a **real-world coding challenge** working with Stellar blockchain data. 
 
 ## Getting Started
 
-### 1. Install dependencies (if not done)
+### 1. Clone the repository
+```bash
+git clone https://github.com/arnob016/questions.git
+cd questions
+```
+
+### 2. Install dependencies
 ```bash
 npm install
 ```
 
-### 2. Start the dev server
+### 3. Setup environment variables
+```bash
+# Copy the example environment file
+cp .env.example .env
+
+# Edit .env and configure your database connection (SQLite by default)
+```
+
+### 4. Push database schema
+```bash
+npm run db:push
+```
+
+### 5. Start the dev server
 ```bash
 npm run dev
 ```
 
-### 3. Explore demo scripts
+### 6. Explore demo scripts (optional)
 ```bash
 # See Horizon API examples
 npx tsx scripts/api_demo.ts
@@ -168,36 +195,50 @@ npx tsx scripts/api_demo.ts
 npx tsx scripts/sdk_demo.ts
 ```
 
-### 4. Open the app
+### 7. Open the app
 Navigate to [http://localhost:3000](http://localhost:3000)
 
 ---
 
 ## Project Structure
 ```
-scripts/
-├── api_demo.ts           # Horizon API examples
-├── sdk_demo.ts           # Stellar SDK examples  
-└── account.ts            # Account data & response examples
-src/
-├── app/
-│   ├── page.tsx          # Main page
-│   └── _components/
-│       └── transaction-list.tsx  # YOUR MAIN WORK FILE
-├── lib/stellar/
-│   ├── trx-api.ts        # Horizon API methods (currently used)
-│   └── trx-sdk.ts        # Stellar SDK methods
-├── server/
-│   ├── db/
-│   │   ├── index.ts      # Database client
-│   │   └── schema.ts     # Database schema (YOU'LL MODIFY)
-│   └── api/routers/
-│       └── transaction.ts # tRPC router (YOU'LL MODIFY)
-└── components/ui/        # shadcn components
-    ├── card.tsx
-    ├── dialog.tsx
-    ├── skeleton.tsx
-    └── button.tsx
+.
+├── scripts/
+│   ├── api_demo.ts           # Horizon API examples
+│   ├── sdk_demo.ts           # Stellar SDK examples  
+│   └── account.ts            # Account data & response examples
+├── src/
+│   ├── app/
+│   │   ├── page.tsx          # Main page
+│   │   ├── layout.tsx        # Root layout
+│   │   └── _components/
+│   │       └── transaction-list.tsx  # YOUR MAIN WORK FILE
+│   ├── lib/
+│   │   └── stellar/
+│   │       ├── trx-api.ts    # Horizon API methods (currently used)
+│   │       └── trx-sdk.ts    # Stellar SDK methods
+│   ├── server/
+│   │   ├── db/
+│   │   │   ├── index.ts      # Database client
+│   │   │   └── schema.ts     # Database schema (YOU'LL MODIFY)
+│   │   └── api/
+│   │       ├── root.ts       # tRPC root router
+│   │       ├── trpc.ts       # tRPC configuration
+│   │       └── routers/
+│   │           └── transaction.ts  # tRPC router (YOU'LL MODIFY)
+│   ├── components/ui/        # shadcn components
+│   │   ├── card.tsx
+│   │   ├── dialog.tsx
+│   │   ├── skeleton.tsx
+│   │   └── button.tsx
+│   └── trpc/                 # tRPC client setup
+│       ├── react.tsx
+│       └── server.ts
+├── .env.example              # Environment variables template
+├── drizzle.config.ts         # Drizzle ORM configuration
+├── next.config.js            # Next.js configuration
+├── package.json              # Project dependencies
+└── tsconfig.json             # TypeScript configuration
 ```
 
 ---
@@ -212,6 +253,16 @@ Returns single transaction details (currently not implemented - you'll build thi
 
 ### `api.transaction.getAcc.useQuery({ publicKey: string })`
 Returns account information including balance.
+
+---
+
+## Test Account
+
+The demo scripts and app use this public Stellar account for testing:
+```
+GBCPVLOMQCKC4MIEYGHZ66MZDS5RMYXNPQQ5SN4DBRE526GJFXWZKROK
+```
+This is a real Stellar mainnet account with transaction history you can use for development.
 
 ## Time Management
 
